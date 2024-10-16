@@ -1,0 +1,18 @@
+[package]
+name = "smart_hosts"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+deku = "0.18.1"
+
+tracing = "0.1.40"
+tracing-appender = "0.2.3"
+tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
+
+# Optional dependencies for deku debugging
+ctor = { version = "0.2.8", optional = true }
+log = { version = "0.4.22", optional = true }
+
+[features]
+debug = ["deku/logging", "ctor", "log"]
