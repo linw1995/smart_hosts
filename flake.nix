@@ -5,7 +5,6 @@
   };
 
   outputs = {
-    self,
     nixpkgs,
     utils,
     ...
@@ -17,12 +16,21 @@
           inherit system;
           config.allowUnfree = true;
         };
-      in rec
-      {
+        lib = pkgs.lib;
+      in {
         devShells.default = pkgs.mkShell {
           nativebuildInputs = with pkgs; [
             pkg-config
           ];
+          buildInputs =
+            []
+            ++ lib.optionals pkgs.stdenv.isDarwin (with pkgs; [
+              libiconv
+              darwin.apple_sdk_12_3.frameworks.Foundation
+              darwin.apple_sdk_12_3.frameworks.Network
+              darwin.apple_sdk_12_3.frameworks.CoreWLAN
+              darwin.apple_sdk_12_3.frameworks.CoreLocation
+            ]);
           packages = with pkgs; [
             dig
           ];

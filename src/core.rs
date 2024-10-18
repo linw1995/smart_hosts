@@ -277,12 +277,6 @@ fn qname_write<W: std::io::Write + std::io::Seek>(
     value.to_writer(writer, ())
 }
 
-#[cfg(feature = "debug")]
-#[ctor::ctor]
-fn init() {
-    crate::logging::setup_console_log();
-}
-
 #[cfg(test)]
 mod tests {
     use std::io::Cursor;
