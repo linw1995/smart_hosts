@@ -20,6 +20,9 @@ tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 # Optional dependencies for deku debugging
 ctor = { version = "0.2.8", optional = true }
 log = { version = "0.4.22", optional = true }
+winit = "=0.29.15"
+tray-icon = "0.19.1"
+freya-core = "0.2.1"
 
 [target.'cfg(target_os = "macos")'.dependencies]
 objc2 = "0.5.2"
@@ -27,6 +30,7 @@ block2 = "0.5.1"
 objc2-foundation = { version = "0.2.2", features = ["all"] }
 objc2-core-wlan = { version = "0.2.2", features = ["all"] }
 objc2-core-location = { version = "0.2.2", features = ["CLLocationManager"] }
+core-foundation = "0.10.0"
 dispatch = { git = "https://github.com/turbocool3r/rust-dispatch.git" }
 
 [features]
@@ -37,5 +41,6 @@ before-packaging-command = "cargo build --release"
 product-name = "smart-hosts"
 identifier = "github.io.smart-hosts"
 icons = []
+
 [package.metadata.packager.macos]
 entitlements = "entitlements.plist"

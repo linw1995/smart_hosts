@@ -4,10 +4,10 @@
     windows_subsystem = "windows"
 )]
 
-use freya::prelude::*;
-
-//use dioxus::prelude::*;
 use dioxus_logger::tracing::{info, Level};
+use freya::prelude::*;
+use freya_core::plugins::{FreyaPlugin, PluginEvent};
+use winit::window::WindowLevel;
 
 mod monitor;
 
@@ -16,18 +16,78 @@ fn main() {
     dioxus_logger::init(Level::INFO).expect("failed to init logger");
     info!("starting app");
 
-    //let cfg = dioxus::desktop::Config::new()
-    //    .with_custom_head(r#"<link rel="stylesheet" href="tailwind.css">"#.to_string());
-    launch(App);
-    // LaunchBuilder::desktop().with_cfg(cfg).launch(App);
+    launch_cfg(
+        App,
+        LaunchConfig::<()>::builder()
+            .with_width(300.0)
+            .with_height(200.0)
+            .with_window_builder(|builder| {
+                builder
+                    .with_title("Smart Hosts")
+                    .with_resizable(false)
+                    .with_window_level(WindowLevel::AlwaysOnTop)
+                    .with_decorations(false)
+                    .with_transparent(true)
+                    .with_visible(false)
+            })
+            .with_plugin(TrayPlugin::default())
+            .build(),
+    );
+}
+
+#[derive(Default)]
+pub struct TrayPlugin {
+    tray: Option<tray_icon::TrayIcon>,
+}
+
+impl FreyaPlugin for TrayPlugin {
+    fn on_event(&mut self, event: &PluginEvent) {
+        match event {
+            PluginEvent::WindowCreated(_) if self.tray.is_none() => {
+                info!("Creating tray icon");
+
+                // We create the icon once the event loop is actually running
+                // to prevent issues like https://github.com/tauri-apps/tray-icon/issues/90
+                self.tray = Some(create_tray());
+            }
+            _ => {
+                // do nothing
+            }
+        }
+    }
+}
+
+fn create_tray() -> tray_icon::TrayIcon {
+    use tray_icon::{menu::Menu, Icon, TrayIconBuilder};
+
+    let tray_menu = Menu::new();
+    let tray_icon = TrayIconBuilder::new()
+        .with_menu(Box::new(tray_menu))
+        .with_title("Smart Hosts")
+        .with_icon(
+            Icon::from_rgba(std::iter::repeat(200).take(4 * 32 * 32).collect(), 32, 32).unwrap(),
+        )
+        .build()
+        .unwrap();
+
+    // We have to request a redraw here to have the icon actually show up.
+    // Winit only exposes a redraw method on the Window so we use core-foundation directly.
+    #[cfg(target_os = "macos")]
+    unsafe {
+        use core_foundation::runloop::{CFRunLoopGetMain, CFRunLoopWakeUp};
+
+        let rl = CFRunLoopGetMain();
+        CFRunLoopWakeUp(rl);
+    }
+    tray_icon
 }
 
 #[component]
 fn App() -> Element {
     let mut count = use_signal(|| 0);
 
-    //let mut m = crate::monitor::Monitor::new();
-    //let ssid = m.start();
+    let mut m = crate::monitor::Monitor::new();
+    let ssid = m.start();
 
     rsx!(
         rect {
