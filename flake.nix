@@ -19,17 +19,20 @@
         lib = pkgs.lib;
       in {
         devShells.default = pkgs.mkShell {
-          nativebuildInputs = with pkgs; [
-            pkg-config
-          ];
-          buildInputs =
-            []
+          buildInputs = with pkgs;
+            [
+              pkg-config
+              openssl
+            ]
             ++ lib.optionals pkgs.stdenv.isDarwin (with pkgs; [
               libiconv
               darwin.apple_sdk_12_3.frameworks.Foundation
               darwin.apple_sdk_12_3.frameworks.Network
               darwin.apple_sdk_12_3.frameworks.CoreWLAN
               darwin.apple_sdk_12_3.frameworks.CoreLocation
+
+              darwin.apple_sdk_12_3.frameworks.AppKit
+              darwin.apple_sdk_12_3.frameworks.WebKit
             ]);
           packages = with pkgs; [
             dig

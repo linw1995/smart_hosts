@@ -14,3 +14,13 @@ Serve your smart hosts file as a DNS server.
 127.0.0.2   *.home.local *.home.wg, ssid="work"
 127.0.0.2   *.home.local *.home.wg, cellular="on"
 ```
+
+## Development
+
+### bundle
+
+```bash
+cargo tauri build --bundles app --target aarch64-apple-darwin
+# cargo tauri build --bundles app --target x86_64-apple-darwin
+# cargo tauri build --bundles app --target universal-apple-darwin
+```
