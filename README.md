@@ -17,6 +17,12 @@ Serve your smart hosts file as a DNS server.
 
 ## Development
 
+### launch
+
+```bash
+cargo tauri dev
+```
+
 ### bundle
 
 ```bash

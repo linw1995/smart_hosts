@@ -1,10 +1,17 @@
+use gloo_utils::format::JsValueSerdeExt;
 use leptos::leptos_dom::ev::SubmitEvent;
 use leptos::*;
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
 
+use smart_hosts_bridge::NetworkEvent;
+
 #[wasm_bindgen]
 extern "C" {
+    // invoke without arguments
+    #[wasm_bindgen(js_namespace = ["window", "__TAURI__", "core"], js_name = invoke)]
+    async fn invoke_without_args(cmd: &str) -> JsValue;
+
     #[wasm_bindgen(js_namespace = ["window", "__TAURI__", "core"])]
     async fn invoke(cmd: &str, args: JsValue) -> JsValue;
 }
@@ -32,10 +39,14 @@ pub fn App() -> impl IntoView {
                 return;
             }
 
-            let args = serde_wasm_bindgen::to_value(&GreetArgs { name: &name }).unwrap();
-            // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-            let new_msg = invoke("greet", args).await.as_string().unwrap();
-            set_greet_msg.set(new_msg);
+            //let args = serde_wasm_bindgen::to_value(&GreetArgs { name: &name }).unwrap();
+            //// Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
+            //let new_msg = invoke("greet", args).await.as_string().unwrap();
+            //
+            let msg = invoke_without_args("monitor").await;
+            let msg: NetworkEvent = msg.into_serde().unwrap();
+
+            set_greet_msg.set(format!("{:?}", msg));
         });
     };
 

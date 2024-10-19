@@ -6,12 +6,18 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
 leptos = { version = "0.6", features = ["csr"] }
-wasm-bindgen = "0.2"
+wasm-bindgen = { version = "0.2" }
 wasm-bindgen-futures = "0.4"
 js-sys = "0.3"
-serde = { version = "1", features = ["derive"] }
+serde.workspace = true
 serde-wasm-bindgen = "0.6"
 console_error_panic_hook = "0.1.7"
+gloo-utils = "0.2.0"
+
+smart-hosts-bridge = { path = "./smart-hosts-bridge" }
+
+[workspace.dependencies]
+serde = { version = "1", features = ["derive"] }
 
 [workspace]
-members = ["src-tauri", "smart-hosts"]
+members = ["src-tauri", "smart-hosts", "smart-hosts-bridge"]

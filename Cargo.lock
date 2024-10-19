@@ -3695,6 +3695,7 @@ version = "0.1.0"
 dependencies = [
  "serde",
  "serde_json",
+ "smart-hosts-bridge",
  "tauri",
  "tauri-build",
  "tauri-plugin-shell",
@@ -3705,12 +3706,21 @@ name = "smart-hosts-app-ui"
 version = "0.1.0"
 dependencies = [
  "console_error_panic_hook",
+ "gloo-utils",
  "js-sys",
  "leptos",
  "serde",
  "serde-wasm-bindgen",
+ "smart-hosts-bridge",
  "wasm-bindgen",
  "wasm-bindgen-futures",
+]
+
+[[package]]
+name = "smart-hosts-bridge"
+version = "0.1.0"
+dependencies = [
+ "serde",
 ]
 
 [[package]]
