@@ -1,77 +1,63 @@
-mod core;
-mod logging;
+#![allow(non_snake_case)]
+#![cfg_attr(
+    all(not(debug_assertions), target_os = "windows"),
+    windows_subsystem = "windows"
+)]
+
+use freya::prelude::*;
+
+//use dioxus::prelude::*;
+use dioxus_logger::tracing::{info, Level};
+
 mod monitor;
 
-use std::{collections::HashMap, io::Cursor, net::UdpSocket};
+fn main() {
+    // Init logger
+    dioxus_logger::init(Level::INFO).expect("failed to init logger");
+    info!("starting app");
 
-use deku::prelude::*;
-use tracing::debug;
-
-use crate::core::*;
-
-#[cfg(test)]
-#[cfg(feature = "debug")]
-#[ctor::ctor]
-fn init() {
-    crate::logging::setup_console_log();
+    //let cfg = dioxus::desktop::Config::new()
+    //    .with_custom_head(r#"<link rel="stylesheet" href="tailwind.css">"#.to_string());
+    launch(App);
+    // LaunchBuilder::desktop().with_cfg(cfg).launch(App);
 }
 
-fn main() {
-    crate::logging::setup_console_log();
+#[component]
+fn App() -> Element {
+    let mut count = use_signal(|| 0);
 
-    let mut m = crate::monitor::Monitor::new();
-    m.start();
+    //let mut m = crate::monitor::Monitor::new();
+    //let ssid = m.start();
 
-    let udp_socket = UdpSocket::bind("127.0.0.1:2053").expect("Failed to bind to address");
-    let mut buf = [0; 512];
-
-    loop {
-        match udp_socket.recv_from(&mut buf) {
-            Ok((size, source)) => {
-                debug!("Received {} bytes from {}", size, source);
-
-                let (_res, mut hdr) = DnsHeader::from_bytes((&buf, 0)).unwrap();
-
-                debug!("Received DNS Header: {:?}", hdr);
-
-                hdr.qr = true;
-
-                debug!("Sending response...");
-                let mut packet = DnsPacket {
-                    header: hdr,
-                    questions: vec![DnsQuestion {
-                        name: "www.google.com.".parse().unwrap(),
-                        r#type: DnsType::A,
-                        class: DnsClass::In,
-                    }],
-                    answers: vec![DnsRecord {
-                        name: "www.google.com.".parse().unwrap(),
-                        r#type: DnsType::A,
-                        class: DnsClass::In,
-                        ttl: 3600,
-                        len: 4,
-                        data: vec![DnsRData::IP("127.0.0.1".parse().unwrap())],
-                    }],
-                    ..Default::default()
-                };
-                packet.header.qdcount = 1;
-                packet.header.ancount = 1;
-
-                debug!("Response: {:?}", packet);
-
-                let mut buf = Vec::new();
-                let cursor = Cursor::new(&mut buf);
-                let mut writer = Writer::new(cursor);
-
-                packet.to_writer(&mut writer, &mut HashMap::new()).unwrap();
-                udp_socket
-                    .send_to(&buf, source)
-                    .expect("Failed to send response");
-            }
-            Err(e) => {
-                debug!("Error receiving data: {}", e);
-                break;
+    rsx!(
+        rect {
+            height: "50%",
+            width: "100%",
+            main_align: "center",
+            cross_align: "center",
+            background: "rgb(0, 119, 182)",
+            color: "white",
+            shadow: "0 4 20 5 rgb(0, 0, 0, 80)",
+            label {
+                font_size: "75",
+                font_weight: "bold",
+                "{count} {ssid}"
             }
         }
-    }
+        rect {
+            height: "50%",
+            width: "100%",
+            main_align: "center",
+            cross_align: "center",
+            direction: "horizontal",
+            Button {
+                onclick: move |_| count += 1,
+                label { "Increase" }
+            }
+            Button {
+                onclick: move |_| count -= 1,
+                label { "Decrease" }
+            }
+        }
+    )
 }

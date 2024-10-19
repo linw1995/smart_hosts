@@ -30,6 +30,9 @@
               darwin.apple_sdk_12_3.frameworks.Network
               darwin.apple_sdk_12_3.frameworks.CoreWLAN
               darwin.apple_sdk_12_3.frameworks.CoreLocation
+
+              darwin.apple_sdk_12_3.frameworks.AppKit
+              darwin.apple_sdk_12_3.frameworks.WebKit
             ]);
           packages = with pkgs; [
             dig

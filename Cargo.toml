@@ -6,6 +6,13 @@ edition = "2021"
 [dependencies]
 deku = "0.18.1"
 
+freya = "0.2"
+dioxus = { version = "0.5", features = [
+  "macro",
+  "hooks",
+], default-features = false }
+dioxus-logger = "0.5.1"
+
 tracing = "0.1.40"
 tracing-appender = "0.2.3"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
@@ -24,3 +31,11 @@ dispatch = { git = "https://github.com/turbocool3r/rust-dispatch.git" }
 
 [features]
 debug = ["deku/logging", "ctor", "log"]
+
+[package.metadata.packager]
+before-packaging-command = "cargo build --release"
+product-name = "smart-hosts"
+identifier = "github.io.smart-hosts"
+icons = []
+[package.metadata.packager.macos]
+entitlements = "entitlements.plist"

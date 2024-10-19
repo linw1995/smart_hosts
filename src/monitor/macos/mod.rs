@@ -25,9 +25,17 @@ pub use nw_path_monitor::*;
 
 impl Monitor {
     pub fn new() -> Self {
+        unsafe {
+            let manager = CLLocationManager::new();
+            manager.requestAlwaysAuthorization();
+            manager.startUpdatingLocation();
+            let status = manager.authorizationStatus();
+            debug!(?status, "location status");
+        }
+
         Self {}
     }
-    pub fn start(&mut self) {
+    pub fn start(&mut self) -> String {
         let mut monitor = NWPathMonitor::create();
 
         let (tx, rx) = mpsc::channel();
@@ -65,26 +73,21 @@ impl Monitor {
                     debug!(?name, "wifi interface");
 
                     unsafe {
-                        let manager = CLLocationManager::new();
-                        manager.startUpdatingLocation();
-                        let status = manager.authorizationStatus();
-                        debug!(?status, "location status");
-
                         let cli = CWWiFiClient::sharedWiFiClient();
                         if let Some(interface) =
                             cli.interfaceWithName(Some(&NSString::from_str(&name)))
                         {
                             let ssid = interface.ssid();
-                            println!("ssid: {:?}", ssid);
-                            debug!(?ssid, "ssid");
+                            return format!("{:?} {:?}", name, ssid);
                         } else {
                             debug!("failed to get interface");
                         }
                     }
-                    return;
+                    return String::new();
                 }
             }
         }
+        String::new()
     }
 }
 
