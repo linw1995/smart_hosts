@@ -4,23 +4,20 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-deku = "0.18.1"
+deku = { version = "0.18.1", features = ["logging"] }
+log = { version = "0.4.22" }
 
-tracing = "0.1.40"
-tracing-appender = "0.2.3"
-tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
-
-# Optional dependencies for deku debugging
-ctor = { version = "0.2.8", optional = true }
-log = { version = "0.4.22", optional = true }
+[dev-dependencies]
+ctor = "0.2.8"
+env_logger = "*"
 
 [target.'cfg(target_os = "macos")'.dependencies]
 objc2 = "0.5.2"
 block2 = "0.5.1"
 objc2-foundation = { version = "0.2.2", features = ["all"] }
 objc2-core-wlan = { version = "0.2.2", features = ["all"] }
-objc2-core-location = { version = "0.2.2", features = ["CLLocationManager"] }
+objc2-core-location = { version = "0.2.2", features = [
+  "CLLocationManagerDelegate",
+  "CLLocationManager",
+] }
 dispatch = { git = "https://github.com/turbocool3r/rust-dispatch.git" }
-
-[features]
-debug = ["deku/logging", "ctor", "log"]

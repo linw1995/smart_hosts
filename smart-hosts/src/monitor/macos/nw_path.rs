@@ -33,8 +33,9 @@ pub struct NWPath {
 impl NWPath {
     pub(crate) fn new(raw: *mut nw_path_t) -> Self {
         unsafe {
-            nw_retain(raw.cast());
-        }
+            // Retain the raw pointer to avoid it being deallocated automatically
+            nw_retain(raw.cast())
+        };
         Self { raw }
     }
 

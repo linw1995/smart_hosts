@@ -28,6 +28,7 @@ pub struct NWInterface {
 impl NWInterface {
     pub(crate) fn new(raw: *mut nw_interface_t) -> Self {
         unsafe {
+            // Retain the raw pointer to avoid it being deallocated automatically
             nw_retain(raw.cast());
         }
         Self { raw }
@@ -45,6 +46,14 @@ impl NWInterface {
 
     pub fn is_wifi(&mut self) -> bool {
         self.get_type() == NWInterfaceType::WIFI
+    }
+
+    pub fn is_cellular(&mut self) -> bool {
+        self.get_type() == NWInterfaceType::CELLULAR
+    }
+
+    pub fn is_wired(&mut self) -> bool {
+        self.get_type() == NWInterfaceType::WIRED
     }
 }
 

@@ -5,7 +5,7 @@ use std::{
 };
 
 use deku::prelude::*;
-use tracing::trace;
+use log::trace;
 
 #[derive(Debug, Default, DekuRead, DekuWrite)]
 #[deku(ctx = "names: &mut HashMap<String, u8>")]
@@ -281,7 +281,7 @@ fn qname_write<W: std::io::Write + std::io::Seek>(
 mod tests {
     use std::io::Cursor;
 
-    use tracing::debug;
+    use log::debug;
 
     use super::*;
 

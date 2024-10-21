@@ -3,7 +3,7 @@
 
 use std::os::raw::c_void;
 
-use block2::{Block, StackBlock};
+use block2::{Block, RcBlock};
 use dispatch::{ffi::dispatch_queue_t, Queue};
 use objc2::runtime::ProtocolObject;
 use objc2::{extern_protocol, ProtocolType};
@@ -40,6 +40,7 @@ impl NWPathMonitor {
     pub fn create() -> Self {
         unsafe {
             let ptr = nw_path_monitor_create();
+            // Retain the raw pointer to avoid it being deallocated automatically
             nw_retain(ptr.cast());
             Self { raw: ptr }
         }
@@ -53,7 +54,7 @@ impl NWPathMonitor {
         unsafe {
             nw_path_monitor_set_update_handler(
                 self.raw,
-                &StackBlock::new(move |p| {
+                &RcBlock::new(move |p: *mut nw_path_t| {
                     let p = NWPath::new(p);
                     handler(p);
                 }),
@@ -80,34 +81,34 @@ mod tests {
     use super::*;
 
     use dispatch::QueuePriority;
-    use tracing::debug;
+    use log::debug;
 
     #[test]
     fn monitor_network() {
         let mut monitor = NWPathMonitor::create();
-        debug!(?monitor, "monitor created");
+        debug!("monitor {monitor:?} created");
 
         monitor.set_update_handler(|mut p| {
             if p.uses_cellular() {
-                tracing::debug!("connection using cellular");
+                debug!("connection using cellular");
             } else if p.uses_wifi() {
-                tracing::debug!("connection using wifi");
+                debug!("connection using wifi");
             } else {
-                tracing::debug!("connection without using wifi or cellular");
+                debug!("connection without using wifi or cellular");
                 return;
             }
 
             p.enumerate_interfaces(|mut i| {
                 let name = i.get_name();
                 let typ = i.get_type();
-                tracing::debug!(?name, %typ, "enumerating interface");
+                debug!("enumerating interface {name:?} type {typ:?}");
                 true
             });
         });
         debug!("set update handler success");
 
         let queue = Queue::global(QueuePriority::Low);
-        debug!(?queue, "queue global created");
+        debug!("queue global created: {queue:?}");
         monitor.set_queue(queue);
         debug!("set queue success");
 
