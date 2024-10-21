@@ -80,6 +80,8 @@ impl Monitor {
         let mut monitor = NWPathMonitor::create();
         monitor.set_update_handler(move |mut path| {
             debug!("received path: {path:?}");
+            let status = path.get_status();
+            debug!("received path status: {status}");
 
             if path.uses_wifi() {
                 debug!("wifi connected");

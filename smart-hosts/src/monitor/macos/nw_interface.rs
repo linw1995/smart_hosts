@@ -93,7 +93,7 @@ impl std::fmt::Display for NWInterfaceType {
             2 => write!(f, "CELLULAR"),
             3 => write!(f, "WIRED"),
             4 => write!(f, "LOOPBACK"),
-            _ => write!(f, "UNKNOWN"),
+            _ => write!(f, "UNKNOWN({})", self.0),
         }
     }
 }
