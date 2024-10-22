@@ -2,7 +2,6 @@ use log::debug;
 use smart_hosts::monitor::Monitor;
 use smart_hosts_bridge::NetworkEvent;
 use tauri::{
-    menu::{Menu, MenuItem},
     tray::{TrayIconBuilder, TrayIconEvent},
     AppHandle, Manager,
 };
@@ -31,30 +30,24 @@ pub fn run() {
         .plugin(tauri_plugin_shell::init())
         .invoke_handler(tauri::generate_handler![monitor])
         .setup(|app| {
-            app.hide().unwrap();
-
             let monitor = Monitor::default();
             monitor.start();
             app.manage(monitor);
 
-            let quit_i = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
-            let menu = Menu::with_items(app, &[&quit_i])?;
-
             let _tray = TrayIconBuilder::new()
                 .icon(app.default_window_icon().unwrap().clone())
-                .menu(&menu)
                 .menu_on_left_click(true)
                 .on_tray_icon_event(|tray_handle, event| {
                     use tauri_plugin_positioner::{Position, WindowExt};
 
-                    tauri_plugin_positioner::on_tray_event(tray_handle.app_handle(), &event);
+                    let app = tray_handle.app_handle();
+                    tauri_plugin_positioner::on_tray_event(app, &event);
 
-                    let win = tray_handle.app_handle().get_webview_window("main").unwrap();
+                    let win = app.get_window("Tray").unwrap();
                     match event {
-                        TrayIconEvent::Enter { .. } => {
-                            let _ = win.as_ref().window().move_window(Position::TrayCenter);
+                        TrayIconEvent::Click { .. } => {
+                            win.move_window(Position::TrayCenter).unwrap();
                             win.show().unwrap();
-                            win.set_always_on_top(true).unwrap();
                         }
                         TrayIconEvent::Leave { .. } => {
                             // win.hide().unwrap();

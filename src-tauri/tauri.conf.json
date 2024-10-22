@@ -13,10 +13,23 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "smart-hosts",
+        "label": "Preferences",
+        "title": "smart-hosts preferences",
+        "tabbingIdentifier": "Preferences",
+        "visible": false,
         "decorations": false,
         "width": 800,
         "height": 600
+      },
+      {
+        "label": "Tray",
+        "title": "smart-hosts tray",
+        "tabbingIdentifier": "Tray",
+        "visible": false,
+        "alwaysOnTop": true,
+        "decorations": false,
+        "width": 300,
+        "height": 400
       }
     ],
     "security": {

@@ -1,4 +1,7 @@
 mod app;
+mod preferences;
+mod tray;
+mod utils;
 
 use app::*;
 use leptos::*;

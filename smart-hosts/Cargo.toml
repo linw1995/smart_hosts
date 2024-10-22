@@ -5,7 +5,7 @@ edition = "2021"
 
 [dependencies]
 deku = { version = "0.18.1", features = ["logging"] }
-log = { version = "0.4.22" }
+log.workspace = true
 
 [dev-dependencies]
 ctor = "0.2.8"
