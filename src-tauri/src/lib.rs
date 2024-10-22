@@ -6,7 +6,30 @@ use tauri::{
     AppHandle, Manager,
 };
 
+enum Window {
+    Tray,
+    Preferences,
+}
+
+impl Window {
+    fn as_str(&self) -> &'static str {
+        use Window::*;
+        match self {
+            Tray => "Tray",
+            Preferences => "Preferences",
+        }
+    }
+}
+
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
+#[tauri::command]
+fn open_preferences(app: AppHandle) {
+    app.get_window(Window::Preferences.as_str())
+        .unwrap()
+        .show()
+        .unwrap();
+}
+
 #[tauri::command]
 fn monitor(app: AppHandle) -> NetworkEvent {
     use smart_hosts::monitor::Monitor;
@@ -28,7 +51,7 @@ pub fn run() {
         .plugin(tauri_plugin_log::Builder::new().build())
         .plugin(tauri_plugin_positioner::init())
         .plugin(tauri_plugin_shell::init())
-        .invoke_handler(tauri::generate_handler![monitor])
+        .invoke_handler(tauri::generate_handler![monitor, open_preferences])
         .setup(|app| {
             let monitor = Monitor::default();
             monitor.start();
@@ -43,7 +66,7 @@ pub fn run() {
                     let app = tray_handle.app_handle();
                     tauri_plugin_positioner::on_tray_event(app, &event);
 
-                    let win = app.get_window("Tray").unwrap();
+                    let win = app.get_window(Window::Tray.as_str()).unwrap();
                     match event {
                         TrayIconEvent::Click { .. } => {
                             win.move_window(Position::TrayCenter).unwrap();

@@ -14,8 +14,17 @@ pub fn Tray() -> impl IntoView {
             msg
         },
     );
+
+    let open_preferences = move |_| {
+        spawn_local(async move {
+            invoke_without_args("open_preferences").await;
+        });
+    };
+
     view! {
         <main class="container">
+            <button on:click=open_preferences>"Open Preferences"</button>
+
             {move || match once.get() {
                 None => view! { <p>"Loading..."</p> }.into_view(),
                 Some(data) => view! { <p>{move || format!("{:?}", data) }</p> }.into_view()
