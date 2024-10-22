@@ -1,0 +1,15 @@
+{
+  "identifier": "desktop-capability",
+  "platforms": [
+    "macOS",
+    "windows",
+    "linux"
+  ],
+  "windows": [
+    "Preferences"
+  ],
+  "permissions": [
+    "log:default",
+    "core:window:allow-start-dragging"
+  ]
+}

@@ -31,45 +31,36 @@ pub fn Preferences() -> impl IntoView {
     };
 
     view! {
-        <div data-tauri-drag-region class="titlebar">
-          <div class="titlebar-button" id="titlebar-minimize">
-            <img
-              src="https://api.iconify.design/mdi:window-minimize.svg"
-              alt="minimize"
-            />
-          </div>
-          <div class="titlebar-button" id="titlebar-maximize">
-            <img
-              src="https://api.iconify.design/mdi:window-maximize.svg"
-              alt="maximize"
-            />
-          </div>
-          <div class="titlebar-button" id="titlebar-close">
-            <img src="https://api.iconify.design/mdi:close.svg" alt="close" />
-          </div>
-        </div>
         <main class="container">
+            <div data-tauri-drag-region class="titlebar">
+                <div class="titlebar-button" id="titlebar-minimize">
+                    <img src="https://api.iconify.design/mdi:window-minimize.svg" alt="minimize" />
+                </div>
+                <div class="titlebar-button" id="titlebar-maximize">
+                    <img src="https://api.iconify.design/mdi:window-maximize.svg" alt="maximize" />
+                </div>
+                <div class="titlebar-button" id="titlebar-close">
+                    <img src="https://api.iconify.design/mdi:close.svg" alt="close" />
+                </div>
+            </div>
+
             <h1>"Welcome to Tauri + Leptos"</h1>
 
             <div class="row">
                 <a href="https://tauri.app" target="_blank">
-                    <img src="public/tauri.svg" class="logo tauri" alt="Tauri logo"/>
+                    <img src="public/tauri.svg" class="logo tauri" alt="Tauri logo" />
                 </a>
                 <a href="https://docs.rs/leptos/" target="_blank">
-                    <img src="public/leptos.svg" class="logo leptos" alt="Leptos logo"/>
+                    <img src="public/leptos.svg" class="logo leptos" alt="Leptos logo" />
                 </a>
             </div>
             <p>"Click on the Tauri and Leptos logos to learn more."</p>
 
             <form class="row" on:submit=greet>
-                <input
-                    id="greet-input"
-                    placeholder="Enter a name..."
-                    on:input=update_name
-                />
+                <input id="greet-input" placeholder="Enter a name..." on:input=update_name />
                 <button type="submit">"Greet"</button>
             </form>
-            <p>{ move || greet_msg.get() }</p>
+            <p>{move || greet_msg.get()}</p>
         </main>
     }
 }

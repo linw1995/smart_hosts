@@ -23,6 +23,8 @@
             [
               pkg-config
               openssl
+
+              nodejs
             ]
             ++ lib.optionals pkgs.stdenv.isDarwin (with pkgs; [
               libiconv

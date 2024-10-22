@@ -13,9 +13,13 @@ pub fn App() -> impl IntoView {
 
     view! {
         {move || match label.as_str() {
-            "Tray" => { view! { <Tray/> } },
-            "Preferences" => { view! {  <Preferences/> } },
-            _ => { unreachable!()}
+            "Tray" => {
+                view! { <Tray /> }
+            }
+            "Preferences" => {
+                view! { <Preferences /> }
+            }
+            _ => unreachable!(),
         }}
     }
 }

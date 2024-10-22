@@ -47,7 +47,7 @@ fn monitor(app: AppHandle) -> NetworkEvent {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    tauri::Builder::default()
+    let app = tauri::Builder::default()
         .plugin(tauri_plugin_log::Builder::new().build())
         .plugin(tauri_plugin_positioner::init())
         .plugin(tauri_plugin_shell::init())
@@ -70,6 +70,7 @@ pub fn run() {
                     match event {
                         TrayIconEvent::Click { .. } => {
                             win.move_window(Position::TrayCenter).unwrap();
+                            win.set_focus().unwrap();
                             win.show().unwrap();
                         }
                         TrayIconEvent::Leave { .. } => {
@@ -81,6 +82,25 @@ pub fn run() {
                 .build(app)?;
             Ok(())
         })
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+        .build(tauri::generate_context!())
+        .expect("error while building tauri application");
+
+    app.run(|app, event| match event {
+        tauri::RunEvent::ExitRequested { api, .. } => {
+            debug!("exit requested");
+            api.prevent_exit();
+        }
+        tauri::RunEvent::WindowEvent { event, label, .. } => {
+            debug!("window event from {:?}: {:?}", label, event);
+            use tauri::WindowEvent::*;
+            match event {
+                Focused(focused) if !focused && label == Window::Tray.as_str() => {
+                    let win = app.get_window(Window::Tray.as_str()).unwrap();
+                    win.hide().unwrap();
+                }
+                _ => {}
+            }
+        }
+        _ => {}
+    })
 }

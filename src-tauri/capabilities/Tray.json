@@ -1,17 +1,15 @@
 {
-  "identifier": "desktop-capability",
+  "identifier": "desktop-tray-capability",
   "platforms": [
     "macOS",
     "windows",
     "linux"
   ],
   "windows": [
-    "Tray",
-    "Preferences"
+    "Tray"
   ],
   "permissions": [
     "log:default",
-    "core:window:allow-start-dragging",
     "positioner:allow-move-window",
     "positioner:allow-set-tray-icon-state"
   ]
