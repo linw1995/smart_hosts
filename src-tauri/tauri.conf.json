@@ -12,31 +12,6 @@
   "app": {
     "withGlobalTauri": true,
     "macOSPrivateApi": true,
-    "windows": [
-      {
-        "label": "Preferences",
-        "title": "smart-hosts preferences",
-        "tabbingIdentifier": "Preferences",
-        "visible": false,
-        "decorations": false,
-        "skipTaskbar": true,
-        "width": 800,
-        "height": 600
-      },
-      {
-        "label": "Tray",
-        "title": "smart-hosts tray",
-        "tabbingIdentifier": "Tray",
-        "visible": false,
-        "alwaysOnTop": true,
-        "resizable": false,
-        "skipTaskbar": true,
-        "transparent": true,
-        "decorations": false,
-        "width": 300,
-        "height": 200
-      }
-    ],
     "security": {
       "csp": null
     }

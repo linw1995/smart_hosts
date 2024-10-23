@@ -1,10 +1,12 @@
-use log::debug;
+use log::{debug, error};
 use smart_hosts::monitor::Monitor;
 use smart_hosts_bridge::NetworkEvent;
 use tauri::{
     tray::{TrayIconBuilder, TrayIconEvent},
-    AppHandle, Manager,
+    webview::WebviewWindowBuilder,
+    AppHandle, Manager, WebviewUrl,
 };
+use tauri_utils::config::WindowEffectsConfig;
 
 enum Window {
     Tray,
@@ -24,10 +26,11 @@ impl Window {
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
 fn open_preferences(app: AppHandle) {
-    app.get_window(Window::Preferences.as_str())
-        .unwrap()
-        .show()
-        .unwrap();
+    if let Some(win) = app.get_window(Window::Preferences.as_str()) {
+        win.show().unwrap();
+    } else {
+        error!("preferences window not found");
+    }
 }
 
 #[tauri::command]
@@ -56,6 +59,37 @@ pub fn run() {
             let monitor = Monitor::default();
             monitor.start();
             app.manage(monitor);
+
+            WebviewWindowBuilder::new(app, Window::Preferences.as_str(), WebviewUrl::default())
+                .title("Smart Hosts - Preferences")
+                .visible(false)
+                .decorations(false)
+                .skip_taskbar(true) // not working in MacOS
+                .transparent(true)
+                .shadow(true)
+                .effects(WindowEffectsConfig {
+                    radius: Some(12.0),
+                    ..Default::default()
+                })
+                .inner_size(800.0, 600.0)
+                .resizable(false)
+                .build()?;
+
+            WebviewWindowBuilder::new(app, Window::Tray.as_str(), WebviewUrl::default())
+                .title("Smart Hosts - Tray")
+                .visible(false)
+                .decorations(false)
+                .skip_taskbar(true) // not working in MacOS
+                .transparent(true)
+                .shadow(true)
+                .effects(WindowEffectsConfig {
+                    radius: Some(12.0),
+                    ..Default::default()
+                })
+                .inner_size(300.0, 200.0)
+                .resizable(false)
+                .always_on_top(true)
+                .build()?;
 
             let _tray = TrayIconBuilder::new()
                 .icon(app.default_window_icon().unwrap().clone())
@@ -94,8 +128,13 @@ pub fn run() {
             debug!("window event from {:?}: {:?}", label, event);
             use tauri::WindowEvent::*;
             match event {
+                CloseRequested { api, .. } => {
+                    api.prevent_close();
+                    let win = app.get_window(&label).unwrap();
+                    win.hide().unwrap();
+                }
                 Focused(focused) if !focused && label == Window::Tray.as_str() => {
-                    let win = app.get_window(Window::Tray.as_str()).unwrap();
+                    let win = app.get_window(&label).unwrap();
                     win.hide().unwrap();
                 }
                 _ => {}

@@ -7,6 +7,9 @@ extern "C" {
     #[wasm_bindgen(method, getter = label)]
     pub fn get_label(this: &Window) -> String;
 
+    #[wasm_bindgen(method)]
+    pub fn close(this: &Window);
+
     #[wasm_bindgen(js_namespace = ["window", "__TAURI__", "window"], js_name = getCurrentWindow)]
     pub fn get_current_window() -> Window;
 

@@ -21,6 +21,8 @@ Serve your smart hosts file as a DNS server.
 
 ```bash
 cargo tauri dev
+# Use below line to avoid rebuilding while developing with rust-analyzer
+cargo tauri dev -- --target-dir ./target/dev 
 ```
 
 ### bundle

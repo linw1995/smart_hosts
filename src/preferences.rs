@@ -1,66 +1,35 @@
-use gloo_utils::format::JsValueSerdeExt;
-use leptos::leptos_dom::ev::SubmitEvent;
 use leptos::*;
 
-use super::utils::invoke_without_args;
-use smart_hosts_bridge::NetworkEvent;
+use crate::utils::get_current_window;
 
 #[component]
 pub fn Preferences() -> impl IntoView {
-    let (name, set_name) = create_signal(String::new());
-    let (greet_msg, set_greet_msg) = create_signal(String::new());
+    view! {
+        <main class="w-screen h-screen rounded-xl bg-white flex flex-col">
+            <div
+                data-tauri-drag-region
+                class="w-full h-11 px-4 flex gap-x-1 pt-3 justify-end items-center z-[99]"
+            >
+                <div className="font-bold text-[#D8D8D8] select-none">"Smart Hosts"</div>
+                <div className="bg-[#D8D8D8] w-[2px] h-[16px] rounded-[10px] mx-2"></div>
 
-    let update_name = move |ev| {
-        let v = event_target_value(&ev);
-        set_name.set(v);
-    };
+                <JellyButton on:click=|_| get_current_window().close() />
+            </div>
 
-    let greet = move |ev: SubmitEvent| {
-        ev.prevent_default();
-        spawn_local(async move {
-            let name = name.get_untracked();
-            if name.is_empty() {
-                return;
-            }
+            <div class="mb-[8vh] grow flex items-center justify-center font-bold text-[#ebebeb] text-4xl select-none">
+                ":)"
+            </div>
+        </main>
+    }
+}
 
-            let msg = invoke_without_args("monitor").await;
-            let msg: NetworkEvent = msg.into_serde().unwrap();
-
-            set_greet_msg.set(format!("{:?}", msg));
-        });
-    };
+#[component]
+pub fn JellyButton() -> impl IntoView {
+    use phosphor_leptos::{Icon, X};
 
     view! {
-        <main class="container">
-            <div data-tauri-drag-region class="titlebar">
-                <div class="titlebar-button" id="titlebar-minimize">
-                    <img src="https://api.iconify.design/mdi:window-minimize.svg" alt="minimize" />
-                </div>
-                <div class="titlebar-button" id="titlebar-maximize">
-                    <img src="https://api.iconify.design/mdi:window-maximize.svg" alt="maximize" />
-                </div>
-                <div class="titlebar-button" id="titlebar-close">
-                    <img src="https://api.iconify.design/mdi:close.svg" alt="close" />
-                </div>
-            </div>
-
-            <h1>"Welcome to Tauri + Leptos"</h1>
-
-            <div class="row">
-                <a href="https://tauri.app" target="_blank">
-                    <img src="public/tauri.svg" class="logo tauri" alt="Tauri logo" />
-                </a>
-                <a href="https://docs.rs/leptos/" target="_blank">
-                    <img src="public/leptos.svg" class="logo leptos" alt="Leptos logo" />
-                </a>
-            </div>
-            <p>"Click on the Tauri and Leptos logos to learn more."</p>
-
-            <form class="row" on:submit=greet>
-                <input id="greet-input" placeholder="Enter a name..." on:input=update_name />
-                <button type="submit">"Greet"</button>
-            </form>
-            <p>{move || greet_msg.get()}</p>
-        </main>
+        <button class="w-[32px] h-[32px] bg-[#EE7D7D] flex items-center justify-center">
+            <Icon icon=X />
+        </button>
     }
 }
