@@ -16,6 +16,7 @@ gloo-utils = "0.2.0"
 
 smart-hosts-bridge = { path = "./smart-hosts-bridge" }
 phosphor-leptos = "0.6.0"
+web-sys = { version = "0.3.72", features = ["Storage"] }
 
 [workspace.dependencies]
 serde = { version = "1", features = ["derive"] }

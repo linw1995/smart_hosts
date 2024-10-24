@@ -1,3 +1,4 @@
+use leptos::WriteSignal;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -35,4 +36,27 @@ pub mod log {
         }};
     }
     pub(crate) use debug;
+}
+
+#[derive(Clone)]
+pub struct ThemeCtx(pub WriteSignal<String>);
+
+pub fn load_theme() -> Option<String> {
+    let window = web_sys::window()?;
+    let storage = window.local_storage().unwrap_or(None)?;
+    storage.get_item("theme").unwrap_or(None)
+}
+
+pub fn save_theme(theme: &str) {
+    let window = web_sys::window().unwrap();
+    let storage = window.local_storage().unwrap().unwrap();
+    storage.set_item("theme", theme).unwrap();
+}
+
+pub fn toggle_theme(theme: &mut String){
+    *theme = if theme == "light" {
+        "night".to_string()
+    } else {
+        "light".to_string()
+    }
 }

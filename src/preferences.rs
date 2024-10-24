@@ -1,11 +1,13 @@
 use leptos::*;
 
-use crate::utils::get_current_window;
+use crate::utils::{get_current_window, toggle_theme, ThemeCtx};
 
 #[component]
 pub fn Preferences() -> impl IntoView {
+    let setter = use_context::<ThemeCtx>().expect("to have found the setter provided");
+
     view! {
-        <main class="w-screen h-screen rounded-xl bg-white flex flex-col">
+        <div class="w-screen h-screen rounded-xl bg-white dark:bg-black flex flex-col">
             <div
                 data-tauri-drag-region
                 class="w-full h-11 px-4 flex gap-x-1 pt-3 justify-end items-center z-[99]"
@@ -16,10 +18,17 @@ pub fn Preferences() -> impl IntoView {
                 <JellyButton on:click=|_| get_current_window().close() />
             </div>
 
+            <button
+                class="flex items-center justify-center"
+                on:click=move |_| setter.0.update(toggle_theme)
+            >
+                "toggle theme"
+            </button>
+
             <div class="mb-[8vh] grow flex items-center justify-center font-bold text-[#ebebeb] text-4xl select-none">
                 ":)"
             </div>
-        </main>
+        </div>
     }
 }
 

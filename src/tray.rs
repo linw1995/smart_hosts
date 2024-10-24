@@ -13,13 +13,13 @@ pub fn Tray() -> impl IntoView {
     };
 
     view! {
-        <main class="bg-white rounded-xl p-4 flex flex-col justify-between w-screen h-screen">
+        <div class="bg-white dark:bg-black rounded-xl p-4 flex flex-col justify-between w-screen h-screen">
             <button class="btn glass" on:click=open_preferences>
                 "Open Preferences"
             </button>
 
             <NetworkStat />
-        </main>
+        </div>
     }
 }
 
